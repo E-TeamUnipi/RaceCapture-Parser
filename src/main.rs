@@ -41,12 +41,12 @@ fn main() -> std::io::Result<()> {
     for line in buf_reader.lines() {
         let line = line?;
         let mut line_split = line.split(',');
-        let istant = line_split.next().unwrap();
-        for (i, val) in line_split.enumerate() {
-            if i > 0 && val != "" {
-                headers[i].points.push(
+        let interval = line_split.next().unwrap();
+        for (i, val) in line_split.skip(1).enumerate() {
+            if !val.trim().is_empty() { 
+                headers[i+2].points.push(
                     Point(
-                        istant.to_string(),
+                        interval.to_string(),
                         val.to_string()
                     )
                 );
@@ -54,14 +54,12 @@ fn main() -> std::io::Result<()> {
         }
     }
     
-    for (i, header) in headers.iter().enumerate() {
-        if i > 1 {
-            println!("{} = [", header.name);
-            for point in header.points.iter() {
-                println!("  {} {}", point.0, point.1);
-            }
-            println!("];");
+    for header in headers.iter().skip(2) {
+        println!("{} = [", header.name);
+        for point in header.points.iter() {
+            println!("  {} {}", point.0, point.1);
         }
+        println!("];");
     } 
 
     Ok(())
